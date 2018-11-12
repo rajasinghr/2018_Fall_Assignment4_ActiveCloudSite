@@ -144,6 +144,11 @@ namespace MVCTemplate.Controllers
             return View(quotes);
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
         /**
          * Saves the equities in database.
         **/
