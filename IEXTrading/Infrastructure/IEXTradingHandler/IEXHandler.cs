@@ -56,7 +56,7 @@ namespace IEXTrading.Infrastructure.IEXTradingHandler
             int batchEnd = 100;
             int stepCount = 100;
             List<Company> batchCompanies = null;
-            List<CompanyStrategyValue> companyStrategyValueList = new List<CompanyStrategyValue>();
+            List<StockWithValue> companyStrategyValueList = new List<StockWithValue>();
             while (batchEnd <= companies.Count)
             {
                 int count = 0;
@@ -122,24 +122,36 @@ namespace IEXTrading.Infrastructure.IEXTradingHandler
             return quoteList;
         }
 
-        public List<CompanyStrategyValue> GetTop5Picks(List<Company> companies)
+        public List<StockWithValue> GetTop5Picks(List<Company> companies)
         {
             List<Quote> quoteList = new List<Quote>();
-            CompanyStrategyValue companyStrategyValue = null;
+            StockWithValue companyStrategyValue = null;
             quoteList = GetQuotes(companies);
-            List<CompanyStrategyValue> companyStrategyValueList = new List<CompanyStrategyValue>();
+            List<StockWithValue> companyStrategyValueList = new List<StockWithValue>();
             foreach (var quote in quoteList)
             {
-                companyStrategyValue = new CompanyStrategyValue();
+                companyStrategyValue = new StockWithValue();
                 companyStrategyValue.symbol = quote.symbol;
+                companyStrategyValue.calculationPrice = quote.calculationPrice;
+                companyStrategyValue.close = quote.close;
+                companyStrategyValue.companyName = quote.companyName;
+                companyStrategyValue.high = quote.high;
+                companyStrategyValue.latestPrice = quote.latestPrice;
+                companyStrategyValue.low = quote.low;
+                companyStrategyValue.open = quote.open;
+                companyStrategyValue.primaryExchange = quote.primaryExchange;
+                companyStrategyValue.sector = quote.sector;
+                companyStrategyValue.symbol = quote.symbol;
+                companyStrategyValue.week52High = quote.week52High;
+                companyStrategyValue.week52Low = quote.week52Low;
                 if ((quote.week52High - quote.week52Low) != 0)
                 {
-                    companyStrategyValue.companyValue = ((quote.close - quote.week52Low) / (quote.week52High - quote.week52Low));
+                    companyStrategyValue.week52Value = ((quote.close - quote.week52Low) / (quote.week52High - quote.week52Low));
                 }
                 companyStrategyValueList.Add(companyStrategyValue);
             }
 
-            return companyStrategyValueList.OrderByDescending(a => a.companyValue).Take(5).ToList();
+            return companyStrategyValueList.OrderByDescending(quote => quote.week52Value).Take(5).ToList();
         }
 
         /**
